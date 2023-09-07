@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.MuiButtonBase-root {
+  padding: 0 !important;
+}
