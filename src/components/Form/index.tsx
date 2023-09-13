@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { IForm } from "../../interfaces/Form";
-import { Input } from "../../shared";
+import { HelperTextError, Input } from "../../shared";
 import { BiErrorCircle } from "react-icons/bi";
 import { TbBrandCashapp } from "react-icons/tb";
 import { BsPeopleFill } from "react-icons/bs";
 import { Radio, RadioGroup } from "@mui/material";
-
-{
-  /* 150 x 0.15 -> 22.50 / 3 = 7.50 */
-}
+import * as C from "./styles";
 
 interface IDefaultCheckbox {
   className: string;
@@ -23,31 +20,36 @@ export const Form: React.FC = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IForm>();
+  } = useForm<IForm>({
+    defaultValues: {
+      bill: 0,
+      numbersPeople: 0,
+      percent: 5,
+    },
+    mode: "onChange",
+  });
 
-  const onSubmit: SubmitHandler<IForm> = async (data) => {
-    console.log(data);
-  };
+  
 
   const DefaultCheckbox: React.FC<IDefaultCheckbox> = ({ className, value }) => {
     return (
-      <button disabled={custom && true} className={`h-12 grid place-items-center w-full rounded-md ${className} font-bold text-xl md:text-2xl`}>
+      <C.DefaultCheckboxButton disabled={custom} className={className}>
         {value}
-      </button>
+      </C.DefaultCheckboxButton>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-10 px-6 text-sm pt-6 sm:pb-6 lg:p-8 lg:text-lg">
+    <C.Form>
       <Controller
         name="bill"
         control={control}
         rules={{ required: "Esse campo é obrigatório" }}
         render={({ field: { onChange } }) => (
           <div>
-            <label htmlFor="bill" className="text-primary font-bold block mb-2">
+            <C.Label htmlFor="bill">
               Valor total da conta
-            </label>
+            </C.Label>
             <Input
               id="bill"
               type="text"
@@ -63,34 +65,37 @@ export const Form: React.FC = () => {
         )}
       />
 
-      <RadioGroup>
-        <label htmlFor="custom" className="text-primary font-bold mb-4">
-          Escolha uma opção %
-        </label>
-        <div className="grid grid-cols-3 gap-[14px]">
-          <Radio value="1" checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="5%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="5%" />} />
-          <Radio value="2" checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="10%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="10%" />} />
-          <Radio value="3" checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="15%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="15%" />} />
-          <Radio value="4" checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="25%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="25%" />} />
-          <Radio value="5" checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="50%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="50%" />} />
-          <Controller
-            name="custom"
-            control={control}
-            render={() => (
+      <Controller
+        name="percent"
+        control={control}
+        rules={{ required: "Escolha uma das opções" }}
+        render={({ field: { onChange, value } }) => (
+          <RadioGroup
+            value={value}
+            onChange={(value) => onChange(value)}
+          >
+            <C.Label htmlFor="percent">Escolha uma opção %</C.Label>
+            <C.BoxOption className="mb-2">
+              <Radio value={5} checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="5%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="5%" />} />
+              <Radio value={10} checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="10%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="10%" />} />
+              <Radio value={15} checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="15%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="15%" />} />
+              <Radio value={25} checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="25%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="25%" />} />
+              <Radio value={50} checked={custom ? false : undefined} icon={<DefaultCheckbox className="bg-primary hover:bg-terciary/[46%] hover:text-primary text-white disabled:bg-primary/20" value="50%" />} checkedIcon={<DefaultCheckbox className="bg-terciary text-primary" value="50%" />} />
               <Input
-                id="custom"
+                id="percent"
                 type="text"
-                onChange={(e) => e.target.value !== "" ? setCustom(true) : setCustom(false)}
+                onChange={onChange}
                 placeholder="Outro"
                 className="placeholder:text-primary text-xl text-center sm:text-base lg:text-xl m-0 px-2 focus:placeholder:text-primary/50 cursor-pointer focus:cursor-text"
                 error={undefined}
                 tip={undefined}
                 Icon={undefined}
-              />    
-            )}
-          />
-        </div>
-      </RadioGroup>
+              />
+            </C.BoxOption>
+            <HelperTextError validation={errors.percent}  />
+          </RadioGroup>
+          )}
+        />
 
       <Controller
         name="numbersPeople"
@@ -98,12 +103,9 @@ export const Form: React.FC = () => {
         rules={{ required: "Esse campo é obrigatório" }}
         render={({ field: { onChange } }) => (
           <div>
-            <label
-              htmlFor="numbersPeople"
-              className="text-primary font-bold block mb-2"
-            >
+            <C.Label htmlFor="numbersPeople">
               Número de pessoas
-            </label>
+            </C.Label>
             <Input
               id="numbersPeople"
               type="text"
@@ -117,6 +119,6 @@ export const Form: React.FC = () => {
           </div>
         )}
       />
-    </form>
+    </C.Form>
   );
 };

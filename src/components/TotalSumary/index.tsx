@@ -1,27 +1,39 @@
 import React from "react";
+import { PriceFormatter } from "../../utils/Formatter";
+import { useSummary } from "../hooks/useSummary";
+import * as C from "./styles";
 
-export const TotalSumary: React.FC = () => {
+export const TotalSumary: React.FC<any> = ({ reset }) => {
+  const { totalValue, totalAmount, clearContext } = useSummary();
+
+  const handleClear = () => {
+    clearContext;
+    reset();
+  }
+
   return (
-    <div className="flex flex-col gap-[53px] bg-primary text-white px-10 pt-14 pb-10 rounded-t-2xl sm:m-4 sm:rounded-2xl sm:gap-10 min-[900px]:gap-[53px] lg:m-8">
-      <div className="flex justify-between items-center sm:flex-col sm:justify-center sm:text-center sm:gap-3 min-[900px]:flex-row min-[900px]:justify-between min-[900px]:text-start">
-        <div className="font-bold">
-          <p className="text-white text-sm lg:text-xl">Valor médio</p>
-          <p className="text-[#FFECDB] text-xs">/ pessoa</p>
-        </div>
-        <p className="text-white text-3xl md:text-5xl font-bold">$4.27</p>
-      </div>
+    <C.Container>
+      <C.BoxTotal>
+        <C.BoxTitle>
+          <C.Title>Valor médio</C.Title>
+          <C.SubTitle>/ pessoa</C.SubTitle>
+        </C.BoxTitle>
+        <C.TotalAmount>${PriceFormatter(totalAmount)}</C.TotalAmount>
+      </C.BoxTotal>
 
-      <div className="flex justify-between items-center sm:flex-col sm:justify-center sm:text-center sm:gap-3 min-[900px]:flex-row min-[900px]:justify-between min-[900px]:text-start">
-        <div className="font-bold">
-          <p className="text-white text-sm lg:text-xl">Valor total</p>
-          <p className="text-[#FFECDB] text-xs">/ pessoa</p>
-        </div>
-        <p className="text-terciary text-3xl md:text-5xl font-bold">$132.79</p>
-      </div>
+      <C.BoxTotal>
+        <C.BoxTitle>
+          <C.Title>Valor total</C.Title>
+          <C.SubTitle>/ pessoa</C.SubTitle>
+        </C.BoxTitle>
+        <C.TotalValue>${PriceFormatter(totalValue)}</C.TotalValue>
+      </C.BoxTotal>
 
-      <div className="h-full flex items-end">
-        <button className="bg-secundary h-12 w-full uppercase font-bold text-base md:text-xl rounded-md">Limpar</button>
-      </div>
-    </div>
+      <C.BoxButton>
+        <C.ButtonReset type="reset" onClick={handleClear}>
+          Limpar
+        </C.ButtonReset>
+      </C.BoxButton>
+    </C.Container>
   );
 };
