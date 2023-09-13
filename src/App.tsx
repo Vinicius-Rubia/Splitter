@@ -17,7 +17,7 @@ interface IDefaultCheckbox {
 }
 
 export const App: React.FC = () => {
-  const [custom, setCustom] = useState<boolean>(false);
+  const [custom] = useState<boolean>(false);
   const { setTotalValue, setTotalAmount } = useSummary();
 
   const {

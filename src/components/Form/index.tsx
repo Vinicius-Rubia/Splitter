@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { IForm } from "../../interfaces/Form";
 import { HelperTextError, Input } from "../../shared";
 import { BiErrorCircle } from "react-icons/bi";
@@ -14,17 +14,16 @@ interface IDefaultCheckbox {
 }
 
 export const Form: React.FC = () => {
-  const [custom, setCustom] = useState<boolean>(false);
+  const [custom] = useState<boolean>(false);
   
   const {
     control,
-    handleSubmit,
     formState: { errors },
   } = useForm<IForm>({
     defaultValues: {
-      bill: 0,
-      numbersPeople: 0,
-      percent: 5,
+      bill: undefined,
+      numbersPeople: undefined,
+      percent: "5",
     },
     mode: "onChange",
   });
